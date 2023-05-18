@@ -2,7 +2,8 @@
 
 ## Setup
 1. Clone the repository  
-2. Install pygame  
+`git clone https://github.com/Elan456/PigBaker.git`
+2. Install pygame (if it's not already installed)  
 `pip install pygame`
 3. Run `main.py` within a python environment that has pygame. 
 
@@ -14,7 +15,7 @@ Bring five pigs to the fire and face *it*
 - Grab/drop/burn pig - Spacebar
 
 ## Purpose
-This game was made to experiment with horror within a very simple
+This game was made in a day to experiment with horror within a very simple
 and short game.
 
 ## Credits
