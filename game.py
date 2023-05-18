@@ -17,6 +17,7 @@ screen = pygame.display.set_mode((640, 480))
 # Being playing the ambient music on an infinite loop
 pygame.mixer.music.load("sounds/ambient_music.mp3")
 font = pygame.font.SysFont("Arial", 25)
+small_font = pygame.font.SysFont("Arial", 15)
 
 
 def play():
@@ -57,7 +58,9 @@ def play():
         for i in range(environment.player.pigs_killed):
             pygame.draw.circle(screen, (255, 0, 0), (i * 25 + 10, 10), 10)
 
+        fps = clock.get_fps()
+        text = small_font.render(str(int(fps)), True, (255, 255, 255))
+        screen.blit(text, (640 - text.get_width() - 5, 480 - text.get_height() - 5))
+
         pygame.display.update()
         clock.tick(60)
-
-        screen.fill((255, 255, 255))

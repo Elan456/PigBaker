@@ -15,14 +15,13 @@ outside_img = pygame.image.load("images/outside.png")
 
 static_sound = pygame.mixer.Sound("sounds/static.wav")
 
-TREE_COUNT = 20
+TREE_COUNT = 10
 PIG_COUNT = 1
 font = pygame.font.SysFont("Arial", 30)
 
 
 class Environment:
     def __init__(self, screen):
-        print("environment init called")
         self.screen = screen
         self.entities = []
 
@@ -34,8 +33,10 @@ class Environment:
         self.pig_god_timer = None
 
         x = 400
-        for _ in range(TREE_COUNT):
-            x += random.randint(100, 400)
+        for i in range(TREE_COUNT):
+            space_left = 4000 - x
+            trees_left = TREE_COUNT - i
+            x += int(space_left / trees_left) + random.randint(-50, 50)
             self.entities.append(entity.Tree(x, self))
 
         for _ in range(PIG_COUNT):
@@ -49,6 +50,24 @@ class Environment:
         self.camera_x = 0
         self.done = False
         self.done_time = None
+
+
+    def update_entities(self):
+        on_screen_entities = []
+        for e in self.entities:
+            e.update()
+
+            # If the entity is on the screen, draw it
+            if e.x + e.image.get_width() - self.camera_x > 0 and e.x - self.camera_x < 640:
+                on_screen_entities.append(e)
+
+        self.z_sort_entities(on_screen_entities)
+        for e in on_screen_entities:
+            e.draw()
+
+
+    def z_sort_entities(self, entity_list):
+        entity_list.sort(key=lambda x: x.y + x.image.get_height() + x.held_height)
 
     def draw(self):
         self.camera_x += (self.player.x - self.camera_x - 320) / 10
@@ -80,21 +99,21 @@ class Environment:
 
         self.screen.blit(outside_img, (0 - self.camera_x, 0))
 
-        # Sorting the entities by y value
-
         self.entities = [e for e in self.entities if e.active]
-        self.entities.sort(key=lambda x: x.y + x.image.get_height() + x.held_height)
+
         pig.pig_burning = False
-        for e in self.entities:
-            e.update()
-            e.draw()
+
+        self.update_entities()
+
 
         if pig.pig_burning:
             # Pause the music
-            pygame.mixer.music.pause()
+            if pygame.mixer.music.get_busy():
+                pygame.mixer.music.pause()
         else:
             # Unpause the music
-            pygame.mixer.music.unpause()
+            if not pygame.mixer.music.get_busy():
+                pygame.mixer.music.unpause()
 
         self.death_rain.update()
 
